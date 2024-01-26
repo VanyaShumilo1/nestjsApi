@@ -2,14 +2,14 @@ import {IsNumber, IsOptional, Length} from "class-validator";
 
 export class FindNearbyObjectsDto {
     @IsNumber()
-    lat: number;
+    readonly lat: number;
     @IsNumber()
-    lon: number;
+    readonly lon: number;
     @IsNumber()
-    radius: number;
+    readonly radius: number;
     @Length(3)
-    object: string;
+    readonly object: string;
     @IsNumber()
     @IsOptional()
-    limit: number
+    readonly limit: number
 }
