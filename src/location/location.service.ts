@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {Location} from "./schemas/location.schema";
 import * as mongoose from "mongoose";
@@ -58,6 +58,7 @@ export class LocationService {
             const y1 = lon + oneMeter * radius
             const x2 = lat + oneMeter * radius
             const y2 = lon - oneMeter * radius
+
             const viewBoxCoordinates = `${x1.toPrecision(7)}, ${y1.toPrecision(7)}, ${x2.toPrecision(7)}, ${y2.toPrecision(7)}`
             const apiUrl = 'https://nominatim.openstreetmap.org/search';
             const params = {

@@ -1,4 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
+import {Length} from "class-validator";
 
 export class UpdateLocationDto {
     @ApiProperty({example: "Title", description: "Name of location"})

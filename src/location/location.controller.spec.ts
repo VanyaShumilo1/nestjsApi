@@ -126,7 +126,7 @@ describe('LocationController', () => {
 
             const expectedResult = [
                 {
-                    place_id: 170614726,
+                    place_id: 202081434,
                     licence: "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
                     osm_type: "way",
                     osm_id: 1076019803,
