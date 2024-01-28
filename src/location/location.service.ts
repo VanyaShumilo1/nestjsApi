@@ -54,10 +54,10 @@ export class LocationService {
         const {lat, lon, radius, object, limit} = params
         try {
             const oneMeter = 0.00001363 * 0.55
-            const x1 = lat - oneMeter * radius
-            const y1 = lon + oneMeter * radius
-            const x2 = lat + oneMeter * radius
-            const y2 = lon - oneMeter * radius
+            const x1 = lon - oneMeter * radius
+            const y1 = lat + oneMeter * radius
+            const x2 = lon + oneMeter * radius
+            const y2 = lat - oneMeter * radius
 
             const viewBoxCoordinates = `${x1.toPrecision(7)}, ${y1.toPrecision(7)}, ${x2.toPrecision(7)}, ${y2.toPrecision(7)}`
             const apiUrl = 'https://nominatim.openstreetmap.org/search';
@@ -74,6 +74,31 @@ export class LocationService {
 
             if (response.status === 200) {
                 return response.data;
+            } else {
+                throw new Error('Failed to fetch data from OpenStreetMap API');
+            }
+        } catch (e) {
+            console.error('Error:', e.message);
+            throw e;
+        }
+    }
+
+    async findNearbyObjectsByCoordinatesWithOverpass(params: FindNearbyObjectsDto) {
+        const {lat, lon, radius, object} = params
+
+        try {
+            const apiUrl = 'https://overpass-api.de/api/interpreter';
+            const params = {
+                data:
+                    `
+                        [out:json];
+                        node[amenity=${object}](around:${radius},${lat}, ${lon});
+                        out;
+                    `
+            }
+            const response = await axios.get(apiUrl, { params });
+            if (response.status === 200) {
+                return response.data.elements;
             } else {
                 throw new Error('Failed to fetch data from OpenStreetMap API');
             }

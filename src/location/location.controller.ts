@@ -56,4 +56,12 @@ export class LocationController {
     async findNearbyObjectsByCoordinates(@Body() params: FindNearbyObjectsDto) {
         return this.locationService.findNearbyObjectsByCoordinates(params)
     }
+
+    @ApiOperation({summary: 'Find nearby places according to given coordinates with overpass'})
+    @ApiResponse({status: 200})
+    @UsePipes(new ValidationPipe())
+    @Post('findNearbyObjectsWithOverpass')
+    async findNearbyObjectsByCoordinatesWithOverpass(@Body() params: FindNearbyObjectsDto) {
+        return this.locationService.findNearbyObjectsByCoordinatesWithOverpass(params)
+    }
 }

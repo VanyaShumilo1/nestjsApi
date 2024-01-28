@@ -13,7 +13,7 @@ describe('LocationController', () => {
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [LocationController],
-            providers: [LocationService,  { provide: getModelToken(Location.name), useValue: jest.fn() }],
+            providers: [LocationService, {provide: getModelToken(Location.name), useValue: jest.fn()}],
         }).compile();
 
         controller = module.get<LocationController>(LocationController);
@@ -73,7 +73,7 @@ describe('LocationController', () => {
     describe('updateById', () => {
         it('should update a location by ID and return the result', async () => {
             const id = '65b0ffa15616d93cf3bc2eb4';
-            const fieldsToUpdate = { title: "updated" };
+            const fieldsToUpdate = {title: "updated"};
             const oldLocation: Location = {
                 title: "new title 1",
                 coordinates: "0.1234 0.4322",
@@ -115,8 +115,8 @@ describe('LocationController', () => {
     describe('findNearbyObjects', () => {
         it('should return nearby objects according to given coordinates', async () => {
             const params: FindNearbyObjectsDto = {
-                lon: 48.61299,
-                lat: 22.2827,
+                lat: 48.61299,
+                lon: 22.2827,
                 radius: 5000,
                 object: "hospital",
                 limit: 1
@@ -126,7 +126,7 @@ describe('LocationController', () => {
 
             const expectedResult = [
                 {
-                    place_id: 202081434,
+                    place_id: 169865963,
                     licence: "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
                     osm_type: "way",
                     osm_id: 1076019803,
@@ -150,4 +150,61 @@ describe('LocationController', () => {
             expect(result).toEqual(expectedResult);
         });
     });
+
+    describe('findNearbyObjectsWithOverpass', () => {
+        it('should return nearby objects according to given coordinates using overpass', async () => {
+            const params: FindNearbyObjectsDto = {
+                lat: 48.61299,
+                lon: 22.2827,
+                radius: 5000,
+                object: "hospital",
+                limit: 1
+            }
+
+            const result = await locationService.findNearbyObjectsByCoordinatesWithOverpass(params);
+
+            const expectedResult = [
+                {
+                    "type": "node",
+                    "id": 5246393459,
+                    "lat": 48.6328387,
+                    "lon": 22.3084518,
+                    "tags": {
+                        "amenity": "hospital",
+                        "healthcare": "hospital",
+                        "name": "Обласний протитуберкульозний диспансер",
+                        "name:uk": "Обласний протитуберкульозний диспансер"
+                    }
+                },
+                {
+                    "type": "node",
+                    "id": 5247029873,
+                    "lat": 48.6344827,
+                    "lon": 22.3102927,
+                    "tags": {
+                        "amenity": "hospital",
+                        "healthcare": "hospital",
+                        "healthcare:speciality": "oncology",
+                        "name": "Обласний онкологічний диспансер",
+                        "name:uk": "Обласний онкологічний диспансер"
+                    }
+                },
+                {
+                    "type": "node",
+                    "id": 9768089310,
+                    "lat": 48.598143,
+                    "lon": 22.3111857,
+                    "tags": {
+                        "amenity": "hospital",
+                        "healthcare": "hospital",
+                        "name": "Обласний наркологічний диспансер",
+                        "name:uk": "Обласний наркологічний диспансер"
+                    }
+                }
+            ]
+            expect(result).toEqual(expectedResult);
+        });
+    });
+
+
 })
