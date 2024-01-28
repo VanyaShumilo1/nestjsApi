@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException} from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {Location} from "./schemas/location.schema";
 import * as mongoose from "mongoose";
@@ -13,40 +13,84 @@ export class LocationService {
     ) {}
 
     async getAll(): Promise<Location[]> {
-        const locations = await this.locationModel.find();
-
-        return locations;
+        try {
+            const locations = await this.locationModel.find();
+            return locations;
+        } catch (e) {
+            throw new InternalServerErrorException({
+                message: "something went wrong",
+                error: e
+            })
+        }
     }
 
     async getById(id: string): Promise<Location> {
-        const location = await this.locationModel.findById(id);
+        try {
+            const location = await this.locationModel.findById(id);
 
-        if(!location) {
-            throw new NotFoundException("Location not found");
+            if(!location) {
+                throw new NotFoundException("Location not found");
+            }
+
+            return location;
+        } catch (e) {
+            throw new InternalServerErrorException({
+                message: "something went wrong",
+                error: e
+            })
         }
 
-        return location;
     }
 
     async create(location: Location): Promise<Location> {
-        const res = await this.locationModel.create(location);
+        try {
+            const res = await this.locationModel.create(location);
 
-        return res;
+            return res;
+        } catch (e) {
+            throw new InternalServerErrorException({
+                message: "something went wrong",
+                error: e
+            })
+        }
+
     }
 
     async updateById(id: string, location: Location): Promise<Location> {
-        const updated = this.locationModel.findByIdAndUpdate(id, location, {
-            new: true,
-            runValidators: true
-        });
+        try {
+            const updated = this.locationModel.findByIdAndUpdate(id, location, {
+                new: true,
+                runValidators: true
+            });
 
-        return updated;
+            if (!updated) {
+                throw new NotFoundException("Location not found");
+            }
+
+            return updated;
+        }catch (e) {
+            throw new InternalServerErrorException({
+                message: "something went wrong",
+                error: e
+            })
+        }
+
     }
 
     async deleteById(id: string): Promise<Location> {
-        const deleted = this.locationModel.findByIdAndDelete(id);
+        try {
+            const deleted = this.locationModel.findByIdAndDelete(id);
+            if (!deleted) {
+                throw new NotFoundException('Location not found');
+            }
+            return deleted;
+        } catch (e) {
+            throw new InternalServerErrorException({
+                message: "something went wrong",
+                error: e
+            })
+        }
 
-        return deleted;
     }
 
 
